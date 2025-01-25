@@ -4,11 +4,10 @@ info:
   version: 1.0.0
   description: |
     API for managing doctor authentication and prescription creation.
-    Current System Time: 2025-01-24 18:24:25 UTC
-    Current User: emreutkan
+
 
 servers:
-  - url: http://localhost:8080/api/v1
+  - url: doctorservice-cgghevcrcrdvh5cx.canadacentral-01.azurewebsites.net/api/v1
     description: Local Development Server
 
 paths:
