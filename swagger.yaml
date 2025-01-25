@@ -1,0 +1,350 @@
+openapi: 3.0.0
+info:
+  title: Doctor Service API
+  version: 1.0.0
+  description: |
+    API for managing doctor authentication and prescription creation.
+    Current System Time: 2025-01-24 18:24:25 UTC
+    Current User: emreutkan
+
+servers:
+  - url: http://localhost:8080/api/v1
+    description: Local Development Server
+
+paths:
+  /auth/login:
+    post:
+      summary: Login as a doctor
+      description: Authenticates a doctor and returns a JWT token valid for 1 hour.
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: "emreutkan"
+                password:
+                  type: string
+                  example: "password123"
+              required:
+                - username
+                - password
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Login successful"
+                  token:
+                    type: string
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+
+  /auth/register:
+    post:
+      summary: Register a new doctor
+      description: Registers a new doctor in the system.
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: "emreutkan"
+                email:
+                  type: string
+                  format: email
+                  example: "emreutkan@example.com"
+                password:
+                  type: string
+                  format: password
+                  example: "password123"
+              required:
+                - username
+                - email
+                - password
+      responses:
+        '201':
+          description: Doctor registered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Doctor registered successfully"
+
+  /doctors/prescriptions:
+    post:
+      summary: Create a new prescription
+      description: Creates a new prescription for a patient.
+      tags:
+        - Prescriptions
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PrescriptionInput'
+      responses:
+        '201':
+          description: Prescription created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Prescription'
+
+    get:
+      summary: Get all prescriptions for the authenticated doctor
+      description: Retrieves all prescriptions created by the currently authenticated doctor.
+      tags:
+        - Prescriptions
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of prescriptions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Prescription'
+
+  /doctors/prescriptions/tc/{tcId}:
+    get:
+      summary: Get prescriptions by TC ID
+      description: Retrieves all prescriptions for a specific TC ID.
+      tags:
+        - Prescriptions
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: tcId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "12345678901"
+      responses:
+        '200':
+          description: List of prescriptions for the TC ID
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Prescription'
+
+  /doctors/prescriptions/{prescriptionId}:
+    get:
+      summary: Get prescription by ID
+      description: Retrieves a specific prescription by its ID.
+      tags:
+        - Prescriptions
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: prescriptionId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "507f1f77bcf86cd799439011"
+      responses:
+        '200':
+          description: The requested prescription
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Prescription'
+        '404':
+          description: Prescription not found
+
+    delete:
+      summary: Delete a prescription
+      description: Deletes a specific prescription by its ID.
+      tags:
+        - Prescriptions
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: prescriptionId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "507f1f77bcf86cd799439011"
+      responses:
+        '200':
+          description: Prescription deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Prescription deleted successfully"
+        '404':
+          description: Prescription not found
+
+  /doctors/prescriptions/{prescriptionId}/medicines/{medicineId}:
+    patch:
+      summary: Update medicine in prescription
+      description: Updates a specific medicine within a prescription.
+      tags:
+        - Prescriptions
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: prescriptionId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "507f1f77bcf86cd799439011"
+        - name: medicineId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "507f1f77bcf86cd799439012"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MedicineUpdate'
+      responses:
+        '200':
+          description: Medicine updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Prescription'
+        '404':
+          description: Prescription or medicine not found
+
+    delete:
+      summary: Delete medicine from prescription
+      description: Removes a specific medicine from a prescription.
+      tags:
+        - Prescriptions
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: prescriptionId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "507f1f77bcf86cd799439011"
+        - name: medicineId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "507f1f77bcf86cd799439012"
+      responses:
+        '200':
+          description: Medicine deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Prescription'
+        '404':
+          description: Prescription or medicine not found
+
+components:
+  schemas:
+    Medicine:
+      type: object
+      required:
+        - name
+        - dosage
+        - quantity
+      properties:
+        _id:
+          type: string
+          example: "507f1f77bcf86cd799439012"
+        name:
+          type: string
+          example: "Aspirin"
+        dosage:
+          type: string
+          example: "500mg"
+        quantity:
+          type: integer
+          example: 30
+
+    MedicineUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Aspirin"
+        dosage:
+          type: string
+          example: "500mg"
+        quantity:
+          type: integer
+          example: 30
+
+    PrescriptionInput:
+      type: object
+      required:
+        - tcId
+        - medicines
+      properties:
+        tcId:
+          type: string
+          example: "12345678901"
+        medicines:
+          type: array
+          items:
+            $ref: '#/components/schemas/Medicine'
+
+    Prescription:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: "507f1f77bcf86cd799439011"
+        tcId:
+          type: string
+          example: "12345678901"
+        doctorId:
+          type: string
+          example: "507f1f77bcf86cd799439013"
+        medicines:
+          type: array
+          items:
+            $ref: '#/components/schemas/Medicine'
+        issuedDate:
+          type: string
+          format: date-time
+          example: "2025-01-24T18:24:25Z"
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
