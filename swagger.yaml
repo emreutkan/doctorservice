@@ -12,7 +12,7 @@ servers:
 paths:
   /auth/login:
     post:
-      summary: Login as a doctor
+      summary: Login as doctor
       description: Authenticates a doctor and returns a JWT token valid for 1 hour.
       tags:
         - Authentication
