@@ -5,7 +5,6 @@ const swaggerUi = require('swagger-ui-express');
 const yaml = require('yamljs');
 const path = require('path');
 const { PORT, MONGO_URI } = require('./utils/env');
-const doctorRoutes = require('./routes/v1/doctorRoutes');
 const authRoutes = require('./routes/v1/authRoutes');
 
 const app = express();
@@ -21,7 +20,6 @@ app.get('/', (req, res) => {
     res.redirect('/swagger');
 });
 
-app.use('/api/v1/doctors', doctorRoutes);
 app.use('/api/v1/auth', authRoutes);
 
 mongoose.connect(MONGO_URI)
