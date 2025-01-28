@@ -17,12 +17,19 @@ const loginHandler = async (req, res) => {
 
         const token = generateToken({
             doctorId: doctor._id.toString(),
-            username: doctor.username
-        });        res.status(200).json({ message: 'Login successful', token });
+            username: doctor.username,
+        });
+
+        res.status(200).json({
+            message: 'Login successful',
+            token,
+            role: doctor.role,
+        });
     } catch (error) {
         res.status(500).json({ message: 'Error logging in', error });
     }
 };
+
 
 const registerHandler = async (req, res) => {
     const { username, email, password } = req.body;
@@ -30,10 +37,15 @@ const registerHandler = async (req, res) => {
     try {
         const newDoctor = new Doctor({ username, email, password });
         await newDoctor.save();
-        res.status(201).json({ message: 'Doctor registered successfully' });
+
+        res.status(201).json({
+            message: 'Doctor registered successfully',
+            role: newDoctor.role,
+        });
     } catch (error) {
         res.status(500).json({ message: 'Error registering doctor', error });
     }
 };
+
 
 module.exports = { loginHandler, registerHandler };

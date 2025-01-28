@@ -46,6 +46,32 @@ paths:
                   token:
                     type: string
                     example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                  role:
+                    type: string
+                    example: "doctor"
+        '404':
+          description: Invalid username or password
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid username or password"
+        '500':
+          description: Error logging in
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Error logging in"
+                  error:
+                    type: string
+                    example: "Internal server error"
 
   /auth/register:
     post:
@@ -86,6 +112,22 @@ paths:
                   message:
                     type: string
                     example: "Doctor registered successfully"
+                  role:
+                    type: string
+                    example: "doctor"
+        '500':
+          description: Error registering doctor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Error registering doctor"
+                  error:
+                    type: string
+                    example: "ValidationError: email already exists"
 
 components:
   securitySchemes:
