@@ -3,7 +3,7 @@
 
 # Doctor Service API
 
-URL: https://doctorservice-cgghevcrcrdvh5cx.canadacentral-01.azurewebsites.net/api/v1
+URL: https://doctorservice-cgghevcrcrdvh5cx.canadacentral-01.azurewebsites.net
 
 ---
 
